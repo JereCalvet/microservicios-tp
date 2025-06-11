@@ -1,0 +1,20 @@
+services:
+  vehiculo-db:
+    image: postgres:latest
+    container_name: vehiculo-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: vehiculo_user
+      POSTGRES_PASSWORD: vehiculo_password
+      POSTGRES_DB: vehiculo_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vehiculo_user"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - vehiculo_db_data:/var/lib/postgresql/data
+
+volumes:
+  vehiculo_db_data:
