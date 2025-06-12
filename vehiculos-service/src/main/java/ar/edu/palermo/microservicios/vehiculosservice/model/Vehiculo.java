@@ -2,6 +2,7 @@ package ar.edu.palermo.microservicios.vehiculosservice.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -24,7 +25,7 @@ public class Vehiculo {
     @NotBlank
     private String modelo;
 
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private TipoVehiculo tipo;
 }
