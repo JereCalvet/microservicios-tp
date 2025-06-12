@@ -5,7 +5,6 @@ import ar.edu.palermo.microservicios.vehiculosservice.model.VehiculoPatchDTO;
 import ar.edu.palermo.microservicios.vehiculosservice.model.VehiculoResponseDTO;
 import ar.edu.palermo.microservicios.vehiculosservice.model.VehiculoUpdateDTO;
 import ar.edu.palermo.microservicios.vehiculosservice.service.VehiculoService;
-import ar.edu.palermo.microservicios.vehiculosservice.service.VehiculoServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -12,14 +12,15 @@
 
 	<modules>
 		<module>vehiculos-service</module>
+		<module>sucursales-service</module>
 	</modules>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.5.0</version>
 	</parent>
 
-	<url/>
 	<licenses>
 		<license>
 			<name>MIT License</name>
@@ -28,18 +29,21 @@
 			<comments>MIT License</comments>
 		</license>
 	</licenses>
+
 	<developers>
 		<developer>
 			<name>Jeremías Calvet</name>
 			<email>jereecalvet@gmail.com</email>
 		</developer>
 	</developers>
+
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection>scm:git:git://github.com/jerecalvet/microservicios-tp.git</connection>
+		<developerConnection>scm:git:ssh://github.com:jerecalvet/microservicios-tp.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/JereCalvet/microservicios-tp</url>
 	</scm>
+
 	<properties>
 		<java.version>21</java.version>
 		<spring-boot.version>3.5.0</spring-boot.version>
@@ -60,6 +64,22 @@
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-web</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-actuator</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-test</artifactId>
+				<version>${spring-boot.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

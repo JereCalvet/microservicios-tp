@@ -8,11 +8,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-
-	<artifactId>vehiculos-service</artifactId>
+	<artifactId>sucursales-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>vehiculos-service</name>
-	<description>Servicio encargado de la gestión de vehículos</description>
+	<name>sucursales-service</name>
+	<description>Servicio encargado de la gestión de sucursales</description>
 	<packaging>jar</packaging>
 
 	<properties>
