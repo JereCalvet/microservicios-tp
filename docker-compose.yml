@@ -31,7 +31,23 @@ services:
       retries: 5
     volumes:
       - sucursal_db_data:/var/lib/postgresql/data
-
+  stock-db:
+    image: postgres:latest
+    container_name: stock-db
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: stock_user
+      POSTGRES_PASSWORD: stock_password
+      POSTGRES_DB: stock_db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U stock_user" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - stock_db_data:/var/lib/postgresql/data
 volumes:
   vehiculo_db_data:
   sucursal_db_data:
+  stock_db_data:

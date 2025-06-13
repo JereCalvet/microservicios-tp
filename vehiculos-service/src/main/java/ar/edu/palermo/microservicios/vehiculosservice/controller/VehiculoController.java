@@ -22,7 +22,7 @@ public class VehiculoController {
     private final VehiculoService vehiculoSvc;
 
     @PostMapping
-    public ResponseEntity<VehiculoResponseDTO> createEvent(@RequestBody @Valid VehiculoCreateDTO createDto) {
+    public ResponseEntity<VehiculoResponseDTO> createVehiculo(@RequestBody @Valid VehiculoCreateDTO createDto) {
         VehiculoResponseDTO savedEntity = vehiculoSvc.save(createDto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -34,7 +34,7 @@ public class VehiculoController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<VehiculoResponseDTO>> getEvents() {
+    public ResponseEntity<List<VehiculoResponseDTO>> getVehiculo() {
         return ResponseEntity.ok(vehiculoSvc.findAll());
     }
 
@@ -44,17 +44,17 @@ public class VehiculoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VehiculoResponseDTO> updateEvent(@PathVariable("id") Long id, @RequestBody @Valid VehiculoUpdateDTO updateDto) {
+    public ResponseEntity<VehiculoResponseDTO> updateVehiculo(@PathVariable("id") Long id, @RequestBody @Valid VehiculoUpdateDTO updateDto) {
         return ResponseEntity.ok(vehiculoSvc.update(id, updateDto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<VehiculoResponseDTO> patchEvent(@PathVariable("id") Long id, @RequestBody @Valid VehiculoPatchDTO patchDto) {
+    public ResponseEntity<VehiculoResponseDTO> patchVehiculo(@PathVariable("id") Long id, @RequestBody @Valid VehiculoPatchDTO patchDto) {
         return ResponseEntity.ok(vehiculoSvc.update(id, patchDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteVehiculo(@PathVariable("id") Long id) {
         vehiculoSvc.delete(id);
         return ResponseEntity.noContent().build();
     }

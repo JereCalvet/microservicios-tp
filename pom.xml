@@ -13,6 +13,7 @@
 	<modules>
 		<module>vehiculos-service</module>
 		<module>sucursales-service</module>
+		<module>stock-service</module>
 		<module>discovery-service</module>
 	</modules>
 

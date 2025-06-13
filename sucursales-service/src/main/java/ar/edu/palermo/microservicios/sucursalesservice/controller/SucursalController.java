@@ -19,7 +19,7 @@ public class SucursalController {
     private final SucursalService sucursalSvc;
 
     @PostMapping
-    public ResponseEntity<SucursalResponseDTO> createEvent(@RequestBody @Valid SucursalCreateDTO createDto) {
+    public ResponseEntity<SucursalResponseDTO> createSucursal(@RequestBody @Valid SucursalCreateDTO createDto) {
         SucursalResponseDTO savedEntity = sucursalSvc.save(createDto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -31,7 +31,7 @@ public class SucursalController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<SucursalResponseDTO>> getEvents() {
+    public ResponseEntity<List<SucursalResponseDTO>> getSucursales() {
         return ResponseEntity.ok(sucursalSvc.findAll());
     }
 
@@ -41,17 +41,17 @@ public class SucursalController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SucursalResponseDTO> updateEvent(@PathVariable("id") Long id, @RequestBody @Valid SucursalUpdateDTO updateDto) {
+    public ResponseEntity<SucursalResponseDTO> updateSucursal(@PathVariable("id") Long id, @RequestBody @Valid SucursalUpdateDTO updateDto) {
         return ResponseEntity.ok(sucursalSvc.update(id, updateDto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<SucursalResponseDTO> patchEvent(@PathVariable("id") Long id, @RequestBody @Valid SucursalPatchDTO patchDto) {
+    public ResponseEntity<SucursalResponseDTO> patchSucursal(@PathVariable("id") Long id, @RequestBody @Valid SucursalPatchDTO patchDto) {
         return ResponseEntity.ok(sucursalSvc.update(id, patchDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteSucursal(@PathVariable("id") Long id) {
         sucursalSvc.delete(id);
         return ResponseEntity.noContent().build();
     }
