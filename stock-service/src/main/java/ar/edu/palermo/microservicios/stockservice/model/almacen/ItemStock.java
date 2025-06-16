@@ -1,4 +1,4 @@
-package ar.edu.palermo.microservicios.stockservice.model;
+package ar.edu.palermo.microservicios.stockservice.model.almacen;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

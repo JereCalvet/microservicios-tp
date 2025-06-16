@@ -1,8 +1,9 @@
-package ar.edu.palermo.microservicios.stockservice.model;
+package ar.edu.palermo.microservicios.stockservice.model.almacen;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -24,6 +25,7 @@ public class Almacen {
     @NotNull
     private Long sucursalId;
 
+    @NotBlank(message = "El nombre del almacén no puede estar vacío")
     @Size(min = 3, max = 50, message = "El nombre del almacén debe tener entre 3 y 50 caracteres")
     private String nombre;
 
@@ -35,6 +37,4 @@ public class Almacen {
     @CollectionTable(name = "stock", joinColumns = @JoinColumn(name = "almacen_id"))
     @MapKeyColumn(name = "vehiculo_id")
     private Map<Long, ItemStock> stock = new HashMap<>();
-
-
 }

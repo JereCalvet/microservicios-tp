@@ -65,8 +65,8 @@ public class DeliveryConfigServiceImpl implements DeliveryConfigService {
 
     @Override
     public void delete(Long id) {
-        DeliveryConfig vehiculoToDelete = deliveryConfigRepository.findById(id)
+        DeliveryConfig deliveryConfigToDelete = deliveryConfigRepository.findById(id)
                 .orElseThrow(() -> new DeliveryConfigNotFoundException(id));
-        deliveryConfigRepository.delete(vehiculoToDelete);
+        deliveryConfigRepository.delete(deliveryConfigToDelete);
     }
 }
