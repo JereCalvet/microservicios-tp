@@ -38,11 +38,10 @@ public class DeliveryConfigServiceImpl implements DeliveryConfigService {
     }
 
     @Override
-    public DeliveryConfigResponseDTO toAlmacenId(Long id) {
-        //TODO: Implementar este método
-        //obtener del servicio de almacenes el id del almacén central
-        //y luego buscar la configuración de entrega desde el almacén central hacia el almacén con el id proporcionado
-        return null;
+    public DeliveryConfigResponseDTO fromAlmacenIdToAlmacenId(Long from, Long to) {
+        DeliveryConfig deliveryConfigFound = deliveryConfigRepository.findByDesdeAlmacenIdAndHastaAlmacenId(from, to)
+                .orElseThrow(() -> new DeliveryConfigNotFoundException(from, to));
+        return deliveryConfigMapper.toResponseDTO(deliveryConfigFound);
     }
 
     @Override

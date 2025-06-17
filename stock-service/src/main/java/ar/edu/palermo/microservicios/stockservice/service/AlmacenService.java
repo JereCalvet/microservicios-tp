@@ -12,7 +12,10 @@ public interface AlmacenService {
     AlmacenResponseDTO update(Long id, AlmacenPatchDTO dto);
     void delete(Long id);
 
-    StockStatusResponseDTO checkStock(Long idAlmacen, Long idVehiculo);
+    StockStatusResponseDTO checkStockSucursal(Long idSucursal, Long idVehiculo);
+    StockStatusResponseDTO checkStockAlmacen(Long idAlmacen, Long idVehiculo);
     StockStatusResponseDTO addStock(Long idAlmacen, Long idVehiculo, int cantidad);
     StockStatusResponseDTO removeStock(Long idAlmacen, Long idVehiculo, Integer cantidad);
+
+    StockRequestResponseDTO stockRequest(Long idSucursal, Long idVehiculo, Integer cantidad);
 }

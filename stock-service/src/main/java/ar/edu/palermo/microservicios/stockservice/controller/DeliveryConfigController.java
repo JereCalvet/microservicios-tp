@@ -43,6 +43,14 @@ public class DeliveryConfigController {
         return ResponseEntity.ok(deliveryConfigSvc.findById(id));
     }
 
+    @GetMapping("/from/{from}/to/{to}")
+    public ResponseEntity<DeliveryConfigResponseDTO> getDeliveryConfigFromTo(
+            @PathVariable("from") Long fromAlmacenId,
+            @PathVariable("to") Long toAlmacenId) {
+        return ResponseEntity.ok(deliveryConfigSvc.fromAlmacenIdToAlmacenId(fromAlmacenId, toAlmacenId));
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<DeliveryConfigResponseDTO> updateDeliveryConfig(@PathVariable("id") Long id, @RequestBody @Valid DeliveryConfigUpdateDTO updateDto) {
         return ResponseEntity.ok(deliveryConfigSvc.update(id, updateDto));

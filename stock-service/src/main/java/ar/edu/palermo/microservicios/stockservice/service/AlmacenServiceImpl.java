@@ -1,7 +1,9 @@
 package ar.edu.palermo.microservicios.stockservice.service;
 
+import ar.edu.palermo.microservicios.stockservice.exception.AlmacenCentralNotFoundException;
 import ar.edu.palermo.microservicios.stockservice.exception.AlmacenNotFoundException;
 import ar.edu.palermo.microservicios.stockservice.exception.NotEnoughStockException;
+import ar.edu.palermo.microservicios.stockservice.exception.NotEnoughStockToTransferException;
 import ar.edu.palermo.microservicios.stockservice.model.almacen.*;
 import ar.edu.palermo.microservicios.stockservice.repository.AlmacenRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +16,76 @@ import java.util.Map;
 @Service
 public class AlmacenServiceImpl implements AlmacenService {
 
+    private final DeliveryConfigService deliveryConfigService;
     private final AlmacenRepository almacenRepository;
     private final AlmacenMapper almacenMapper;
 
-    public StockStatusResponseDTO checkStock(Long idAlmacen, Long idVehiculo) {
+    public StockRequestResponseDTO stockRequest(Long idSucursal, Long idVehiculo, Integer cantidad) {
+        Almacen almacenLocal = almacenRepository.findBySucursalId(idSucursal)
+                .orElseThrow(() -> new AlmacenNotFoundException(idSucursal));
+        Map<Long, ItemStock> stockLocal = almacenLocal.getStock();
+        ItemStock cantidadEnStockLocal = stockLocal.getOrDefault(idVehiculo, new ItemStock(0));
+
+        if (cantidadEnStockLocal.getCantidad() >= cantidad) {
+            this.removeStock(almacenLocal.getId(), idVehiculo, cantidad);
+            return new StockRequestResponseDTO(0);
+        }
+
+        Almacen almacenCentral = almacenRepository.findByTipo(TipoAlmacen.CENTRAL)
+                .orElseThrow(AlmacenCentralNotFoundException::new);
+        Map<Long, ItemStock> stockCentral = almacenCentral.getStock();
+        ItemStock cantidadEnStockCentral = stockCentral.getOrDefault(idVehiculo, new ItemStock(0));
+
+        if (cantidadEnStockCentral.getCantidad() >= cantidad) {
+            this.transferStock(almacenCentral.getId(), almacenLocal.getId(), idVehiculo, cantidad);
+            Integer tiempoEntregaEstimadoEnDias = this.calculateTransferTimeFromConfig(almacenCentral.getId(), almacenLocal.getId());
+            return new StockRequestResponseDTO(tiempoEntregaEstimadoEnDias);
+        }
+
+        throw new NotEnoughStockException(0);
+    }
+
+    public void transferStock(Long idAlmacenOrigen, Long idAlmacenDestino, Long idVehiculo, Integer cantidad) {
+        Almacen almacenOrigen = almacenRepository.findById(idAlmacenOrigen)
+                .orElseThrow(() -> new AlmacenNotFoundException(idAlmacenOrigen));
+        Map<Long, ItemStock> stockOrigen = almacenOrigen.getStock();
+        ItemStock itemStockOrigen = stockOrigen.getOrDefault(idVehiculo, new ItemStock(0));
+
+        if (itemStockOrigen.getCantidad() < cantidad) {
+            throw new NotEnoughStockToTransferException(itemStockOrigen.getCantidad());
+        }
+
+        itemStockOrigen.setCantidad(itemStockOrigen.getCantidad() - cantidad);
+        stockOrigen.put(idVehiculo, itemStockOrigen);
+        almacenOrigen.setStock(stockOrigen);
+        almacenRepository.save(almacenOrigen);
+
+        Almacen almacenDestino = almacenRepository.findById(idAlmacenDestino)
+                .orElseThrow(() -> new AlmacenNotFoundException(idAlmacenDestino));
+        Map<Long, ItemStock> stockDestino = almacenDestino.getStock();
+        ItemStock itemStockDestino = stockDestino.getOrDefault(idVehiculo, new ItemStock(0));
+        itemStockDestino.setCantidad(itemStockDestino.getCantidad() + cantidad);
+        stockDestino.put(idVehiculo, itemStockDestino);
+        almacenDestino.setStock(stockDestino);
+        almacenRepository.save(almacenDestino);
+    }
+
+    private Integer calculateTransferTimeFromConfig(Long idAlmacenOrigen, Long idAlmacenDestino) {
+       return deliveryConfigService.fromAlmacenIdToAlmacenId(idAlmacenOrigen, idAlmacenDestino)
+               .tiempoEntregaEstimadoEnDias();
+    }
+
+    public StockStatusResponseDTO checkStockSucursal(Long idSucursal, Long idVehiculo) {
+        Almacen almacenLocal = almacenRepository.findBySucursalId(idSucursal)
+                .orElseThrow(() -> new AlmacenNotFoundException(idSucursal));
+        Map<Long, ItemStock> stockLocal = almacenLocal.getStock();
+        ItemStock itemStock = stockLocal.getOrDefault(idVehiculo, new ItemStock(0));
+        Integer cantidadVehiculos = itemStock.getCantidad();
+
+        return new StockStatusResponseDTO(almacenLocal.getId(), idVehiculo, cantidadVehiculos);
+    }
+
+    public StockStatusResponseDTO checkStockAlmacen(Long idAlmacen, Long idVehiculo) {
         Almacen almacenFound = almacenRepository.findById(idAlmacen)
                 .orElseThrow(() -> new AlmacenNotFoundException(idAlmacen));
         Map<Long, ItemStock> stock = almacenFound.getStock();

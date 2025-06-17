@@ -11,11 +11,7 @@ public interface DeliveryConfigService {
     DeliveryConfigResponseDTO save(DeliveryConfigCreateDTO dto);
     List<DeliveryConfigResponseDTO> findAll();
     DeliveryConfigResponseDTO findById(Long id);
-    /**
-    * Este método es para obtener la configuración de entrega
-    * desde el almacén central hacia un almacén específico.
-    */
-    DeliveryConfigResponseDTO toAlmacenId(Long id);
+    DeliveryConfigResponseDTO fromAlmacenIdToAlmacenId(Long from, Long to);
     DeliveryConfigResponseDTO update(Long id, DeliveryConfigUpdateDTO dto);
     DeliveryConfigResponseDTO update(Long id, DeliveryConfigPatchDTO dto);
     void delete(Long id);

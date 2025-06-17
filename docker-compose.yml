@@ -47,7 +47,24 @@ services:
       retries: 5
     volumes:
       - stock_db_data:/var/lib/postgresql/data
+  venta-db:
+    image: postgres:latest
+    container_name: venta-db
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: venta_user
+      POSTGRES_PASSWORD: venta_password
+      POSTGRES_DB: venta_db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U venta_user" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - venta_db_data:/var/lib/postgresql/data
 volumes:
   vehiculo_db_data:
   sucursal_db_data:
   stock_db_data:
+  venta_db_data:

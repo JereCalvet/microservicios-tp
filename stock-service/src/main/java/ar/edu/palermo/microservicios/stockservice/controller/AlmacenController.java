@@ -1,7 +1,6 @@
 package ar.edu.palermo.microservicios.stockservice.controller;
 
 import ar.edu.palermo.microservicios.stockservice.model.almacen.*;
-import ar.edu.palermo.microservicios.stockservice.model.almacen.AlmacenResponseDTO;
 import ar.edu.palermo.microservicios.stockservice.service.AlmacenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +18,28 @@ public class AlmacenController {
 
     private final AlmacenService almacenSvc;
 
+    @PostMapping
+    @RequestMapping("/test")
+    public ResponseEntity<Void> test(@RequestBody @Valid AlmacenTestDto dto) {
+
+        almacenSvc.stockRequest(dto.idSucursal(), dto.idVehiculo(), dto.cantidad());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/sucursal/check-stock/{idSucursal}/vehiculo/{idVehiculo}")
+    public ResponseEntity<StockStatusResponseDTO> checkStockSucursal(
+            @PathVariable("idSucursal") Long idSucursal,
+            @PathVariable("idVehiculo") Long idVehiculo) {
+
+        return ResponseEntity.ok(almacenSvc.checkStockSucursal(idSucursal, idVehiculo));
+    }
+
     @GetMapping("/check-stock/{idAlmacen}/vehiculo/{idVehiculo}")
-    public ResponseEntity<StockStatusResponseDTO> checkStock(
+    public ResponseEntity<StockStatusResponseDTO> checkStockAlmacen(
             @PathVariable("idAlmacen") Long idAlmacen,
             @PathVariable("idVehiculo") Long idVehiculo) {
 
-        return ResponseEntity.ok(almacenSvc.checkStock(idAlmacen, idVehiculo));
+        return ResponseEntity.ok(almacenSvc.checkStockAlmacen(idAlmacen, idVehiculo));
     }
 
     @PostMapping

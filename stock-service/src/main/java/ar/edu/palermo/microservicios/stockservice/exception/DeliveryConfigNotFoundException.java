@@ -12,4 +12,8 @@ public class DeliveryConfigNotFoundException extends RuntimeException {
     public DeliveryConfigNotFoundException(Long configId) {
         super(String.format(DELIVERY_CONFIG_ID_NOT_FOUND_ERROR_MSG, configId));
     }
+
+    public DeliveryConfigNotFoundException(Long from, Long to) {
+        super(String.format("No existe la configuración desdeAlmacenId %d hastaAlmacenId %d not found.", from, to));
+    }
 }

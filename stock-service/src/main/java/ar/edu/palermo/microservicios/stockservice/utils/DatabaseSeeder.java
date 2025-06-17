@@ -1,6 +1,7 @@
 package ar.edu.palermo.microservicios.stockservice.utils;
 
 import ar.edu.palermo.microservicios.stockservice.model.almacen.Almacen;
+import ar.edu.palermo.microservicios.stockservice.model.almacen.ItemStock;
 import ar.edu.palermo.microservicios.stockservice.model.almacen.TipoAlmacen;
 import ar.edu.palermo.microservicios.stockservice.model.deliveryconfig.DeliveryConfig;
 import ar.edu.palermo.microservicios.stockservice.repository.AlmacenRepository;
@@ -10,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
@@ -25,17 +27,33 @@ public class DatabaseSeeder implements CommandLineRunner {
                     .sucursalId(1L)
                     .nombre("Almacen - TOYOTA CASA CENTRAL")
                     .tipo(TipoAlmacen.CENTRAL)
+                    .stock(Map.of(
+                            1L, new ItemStock(50), // ETIOS 1.6
+                            2L, new ItemStock(50), // HILUX 3.0
+                            3L, new ItemStock(50)  // CAMARO 6.2
+                    ))
                     .build();
             Almacen almacenRioGrande = Almacen.builder()
                     .sucursalId(2L)
                     .nombre("Almacen - TOYOTA RIO GRANDE")
                     .tipo(TipoAlmacen.LOCAL)
+                    .stock(Map.of(
+                            1L, new ItemStock(1), // ETIOS 1.6
+                            2L, new ItemStock(1), // HILUX 3.0
+                            3L, new ItemStock(1)  // CAMARO 6.2
+                    ))
                     .build();
             Almacen almacenUshuaia = Almacen.builder()
                     .sucursalId(3L)
                     .nombre("Almacen - TOYOTA USHUAIA")
                     .tipo(TipoAlmacen.LOCAL)
+                    .stock(Map.of(
+                            1L, new ItemStock(2),
+                            2L, new ItemStock(2),  // HILUX 3.0
+                            3L, new ItemStock(2)   // CAMARO 6.2
+                    ))
                     .build();
+
             almacenRepository.saveAll(
                     List.of(
                             almacenCentral,
