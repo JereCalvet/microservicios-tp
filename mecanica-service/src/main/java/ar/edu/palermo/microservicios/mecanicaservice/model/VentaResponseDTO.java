@@ -1,4 +1,4 @@
-package ar.edu.palermo.microservicios.ventasservice.model;
+package ar.edu.palermo.microservicios.mecanicaservice.model;
 
 import java.time.LocalDate;
 

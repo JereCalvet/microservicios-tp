@@ -6,7 +6,7 @@ import ar.edu.palermo.microservicios.ventasservice.exception.SucursalConfigurati
 import ar.edu.palermo.microservicios.ventasservice.exception.VentaNotFoundException;
 import ar.edu.palermo.microservicios.ventasservice.integration.StockClient;
 import ar.edu.palermo.microservicios.ventasservice.model.*;
-import ar.edu.palermo.microservicios.ventasservice.repository.VentasRepositoy;
+import ar.edu.palermo.microservicios.ventasservice.repository.VentasRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class VentasServiceImpl implements VentasService {
 
     private final StockClient stockClient;
     private final SucursalConfig sucursalConfig;
-    private final VentasRepositoy ventasRepository;
+    private final VentasRepository ventasRepository;
     private final VentaMapper ventaMapper;
 
     @Override
@@ -35,6 +35,13 @@ public class VentasServiceImpl implements VentasService {
     public VentaResponseDTO findById(Long id) {
         Venta ventaFound = ventasRepository.findById(id)
                 .orElseThrow(() -> new VentaNotFoundException(id));
+        return ventaMapper.toResponseDTO(ventaFound);
+    }
+
+    @Override
+    public VentaResponseDTO findByPatenteVehiculo(String patenteVehiculo) {
+        Venta ventaFound = ventasRepository.findByPatenteVehiculo(patenteVehiculo)
+                .orElseThrow(() -> new VentaNotFoundException(patenteVehiculo));
         return ventaMapper.toResponseDTO(ventaFound);
     }
 
@@ -57,6 +64,12 @@ public class VentasServiceImpl implements VentasService {
                 .dniCliente(datosFacturaDTO.dniCliente())
                 .cantidad(datosFacturaDTO.cantidad())
                 .totalVenta(datosFacturaDTO.cantidad() * datosFacturaDTO.precioUnitario())
+                .patenteVehiculo(String.format(
+                        "%s-%s-%s",
+                        datosFacturaDTO.nombreCliente().substring(0, 3).toUpperCase(),
+                        datosFacturaDTO.dniCliente().substring(0, 3),
+                        "ARG"
+                ))
                 .observaciones(String.format(
                         "Venta realizada con éxito. Tiempo de espera estimado: %d días.",
                         diasEspera
@@ -64,11 +77,16 @@ public class VentasServiceImpl implements VentasService {
                 .build();
         ventasRepository.save(factura);
 
-        stockClient.removeStock(
-                idAlmacenDeLaSucursal,
-                datosFacturaDTO.vehiculoId(),
-                datosFacturaDTO.cantidad()
-        );
+        try {
+            stockClient.removeStock(
+                    idAlmacenDeLaSucursal,
+                    datosFacturaDTO.vehiculoId(),
+                    datosFacturaDTO.cantidad()
+            );
+        } catch (Exception e) {
+            System.out.println("Error al eliminar stock: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     private StockRequestResponseDTO solicitarStock(Long vehiculoId, Integer cantidad) {
@@ -77,13 +95,26 @@ public class VentasServiceImpl implements VentasService {
             throw new SucursalConfigurationNotFoundException();
         }
 
-        var availabilityStockResponse = stockClient.verifyAvailability(Long.valueOf(sucursalId), vehiculoId, cantidad);
+        StockVerifyAvailabilityResponseDTO availabilityStockResponse = null;
+        try {
+            availabilityStockResponse = stockClient.verifyAvailability(Long.valueOf(sucursalId), vehiculoId, cantidad);
+        } catch (NumberFormatException e) {
+            System.out.println("Error verificar diponibilidad de stock: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
         if (!availabilityStockResponse.isAvailable()) {
             throw new NotEnoughStockForSaleException();
         }
 
-        return stockClient.stockRequest(
-                new StockRequestDTO(Long.valueOf(sucursalId), vehiculoId, cantidad)
-        );
+        StockRequestResponseDTO dto = null;
+        try {
+            dto = stockClient.stockRequest(
+                    new StockRequestDTO(Long.valueOf(sucursalId), vehiculoId, cantidad)
+            );
+        } catch (NumberFormatException e) {
+            System.out.println("Error al solicitar stock: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return dto;
     }
 }

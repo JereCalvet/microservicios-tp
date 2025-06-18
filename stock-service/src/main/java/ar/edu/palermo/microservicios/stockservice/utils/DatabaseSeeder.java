@@ -30,7 +30,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                     .stock(Map.of(
                             1L, new ItemStock(50), // ETIOS 1.6
                             2L, new ItemStock(50), // HILUX 3.0
-                            3L, new ItemStock(50)  // CAMARO 6.2
+                            3L, new ItemStock(50),  // IVECO 4.5
+                            4L, new ItemStock(50) // CBR 500
                     ))
                     .build();
             Almacen almacenRioGrande = Almacen.builder()
@@ -40,7 +41,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                     .stock(Map.of(
                             1L, new ItemStock(1), // ETIOS 1.6
                             2L, new ItemStock(1), // HILUX 3.0
-                            3L, new ItemStock(1)  // CAMARO 6.2
+                            3L, new ItemStock(1),  // IVECO 4.5
+                            4L, new ItemStock(1) // CBR 500
                     ))
                     .build();
             Almacen almacenUshuaia = Almacen.builder()
@@ -48,9 +50,10 @@ public class DatabaseSeeder implements CommandLineRunner {
                     .nombre("Almacen - TOYOTA USHUAIA")
                     .tipo(TipoAlmacen.LOCAL)
                     .stock(Map.of(
-                            1L, new ItemStock(2),
+                            1L, new ItemStock(2), // ETIOS 1.6
                             2L, new ItemStock(2),  // HILUX 3.0
-                            3L, new ItemStock(2)   // CAMARO 6.2
+                            3L, new ItemStock(2),  // IVECO 4.5
+                            4L, new ItemStock(2) // CBR 500
                     ))
                     .build();
 

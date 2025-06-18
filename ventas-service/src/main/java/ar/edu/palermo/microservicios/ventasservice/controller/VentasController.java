@@ -28,6 +28,11 @@ public class VentasController {
         return ResponseEntity.ok(ventasService.findAll());
     }
 
+    @GetMapping("/patente/{patenteVehiculo}")
+    public ResponseEntity<VentaResponseDTO> getVentaByPatente(@PathVariable("patenteVehiculo") String patenteVehiculo) {
+        return ResponseEntity.ok(ventasService.findByPatenteVehiculo(patenteVehiculo));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<VentaResponseDTO> getVentaById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(ventasService.findById(id));

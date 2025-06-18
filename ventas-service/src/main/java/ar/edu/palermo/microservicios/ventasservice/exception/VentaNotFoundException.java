@@ -12,6 +12,10 @@ public class VentaNotFoundException extends RuntimeException {
     public VentaNotFoundException(Long idVenta) {
         super(String.format(VENTA_ID_NOT_FOUND_ERROR_MSG, idVenta));
     }
+
+    public VentaNotFoundException(String patenteVehiculo) {
+        super(String.format("Venta con patente de vehiculo '%s' no encontrada.", patenteVehiculo));
+    }
 }
 
 

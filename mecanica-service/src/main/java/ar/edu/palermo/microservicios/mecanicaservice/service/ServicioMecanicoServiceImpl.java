@@ -2,6 +2,8 @@ package ar.edu.palermo.microservicios.mecanicaservice.service;
 
 import ar.edu.palermo.microservicios.mecanicaservice.configuration.GarantiaConfig;
 import ar.edu.palermo.microservicios.mecanicaservice.exception.ServicioMecanicoNotFoundException;
+import ar.edu.palermo.microservicios.mecanicaservice.integration.VehiculoClient;
+import ar.edu.palermo.microservicios.mecanicaservice.integration.VentasClient;
 import ar.edu.palermo.microservicios.mecanicaservice.model.*;
 import ar.edu.palermo.microservicios.mecanicaservice.repository.ServicioMecanicoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,16 +18,46 @@ public class ServicioMecanicoServiceImpl implements ServicioMecanicoService {
 
     private final ServicioMecanicoRepository servicioMecanicoRepository;
     private final ServicioMecanicoMapper servicioMecanicoMapper;
+    private final VentasClient ventasClient;
+    private final VehiculoClient vehiculoClient;
     private final GarantiaConfig garantiaConfig;
 
     @Override
     public ServicioMecanicoResponseDTO save(ServicioMecanicoCreateDTO dto) {
         ServicioMecanico entity = servicioMecanicoMapper.toEntity(dto);
         entity.setFechaServicio(LocalDate.now());
-
-        //todo: calcular si esta en garantía
+        entity.setGarantia(estaEnGarantia(dto));
         ServicioMecanico saved = servicioMecanicoRepository.save(entity);
         return servicioMecanicoMapper.toResponseDTO(saved);
+    }
+
+    private boolean estaEnGarantia(ServicioMecanicoCreateDTO dto) {
+        VentaResponseDTO ventaByPatente = null;
+        try {
+            ventaByPatente = ventasClient.getVentaByPatente(dto.patenteVehiculo());
+        } catch (Exception e) {
+            System.out.println("Error al consultar la venta por patente: " + e.getMessage());
+        }
+        if (ventaByPatente == null) {
+            return false;
+        }
+        LocalDate fechaCompra = ventaByPatente.fechaVenta();
+        VehiculoResponseDTO vehiculoById = null;
+        try {
+            vehiculoById = vehiculoClient.getVehiculoById(ventaByPatente.vehiculoId());
+        } catch (Exception e) {
+            System.out.println("Error al consultar el vehículo por ID: " + e.getMessage());
+        }
+        if (vehiculoById == null) {
+            return false;
+        }
+        Integer aniosEnGarantia = garantiaConfig.getPorTipo(vehiculoById.tipo());
+        if (aniosEnGarantia == null) {
+            return false;
+        }
+
+        LocalDate fechaFinGarantia = fechaCompra.plusYears(aniosEnGarantia);
+        return !LocalDate.now().isAfter(fechaFinGarantia);
     }
 
     @Override

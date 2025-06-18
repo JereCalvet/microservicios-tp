@@ -56,4 +56,6 @@ public class Venta {
     private Double totalVenta = 0.0;
 
     private String observaciones;
+
+    private String patenteVehiculo;
 }

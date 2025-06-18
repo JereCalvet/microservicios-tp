@@ -17,7 +17,7 @@ public class Vehiculo {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 6, max = 30, message = "La patente debe tener entre 6 y 20 caracteres")
+    @Size(min = 6, max = 30, message = "La marca debe tener entre 6 y 20 caracteres")
     @NotBlank
     private String marca;
 

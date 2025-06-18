@@ -31,11 +31,16 @@ public class DatabaseSeeder implements CommandLineRunner {
                                     .tipo(TipoVehiculo.CAMIONETA)
                                     .build(),
                             Vehiculo.builder()
-                                    .marca("CHEVROLET")
-                                    .modelo("CAMARO 6.2")
-                                    .tipo(TipoVehiculo.AUTOMOVIL)
+                                    .marca("IVECOS")
+                                    .modelo("EUROCARGO 4.5")
+                                    .tipo(TipoVehiculo.CAMION)
+                                    .build(),
+                            Vehiculo.builder()
+                                    .marca("HONDAS")
+                                    .modelo("CBR 500")
+                                    .tipo(TipoVehiculo.MOTOCICLETA)
                                     .build()
-                            )
+                    )
             );
         }
         System.out.println("Database seeded with initial data.");
