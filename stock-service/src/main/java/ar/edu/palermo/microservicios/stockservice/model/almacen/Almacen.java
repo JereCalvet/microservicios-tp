@@ -33,6 +33,7 @@ public class Almacen {
     @Enumerated(EnumType.STRING)
     private TipoAlmacen tipo;
 
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "stock", joinColumns = @JoinColumn(name = "almacen_id"))
     @MapKeyColumn(name = "vehiculo_id")

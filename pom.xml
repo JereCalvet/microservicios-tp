@@ -11,6 +11,7 @@
 	<description>tp-concesionaria</description>
 
 	<modules>
+		<module>ventas-service</module>
 		<module>vehiculos-service</module>
 		<module>sucursales-service</module>
 		<module>stock-service</module>

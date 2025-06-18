@@ -20,6 +20,32 @@ public class AlmacenServiceImpl implements AlmacenService {
     private final AlmacenRepository almacenRepository;
     private final AlmacenMapper almacenMapper;
 
+    public StockVerifyAvailabilityResponseDTO verifyAvailability(Long idSucursal, Long idVehiculo, Integer cantidad) {
+        Almacen almacenLocal = almacenRepository.findBySucursalId(idSucursal)
+                .orElseThrow(() -> new AlmacenNotFoundException(idSucursal));
+        Map<Long, ItemStock> stockLocal = almacenLocal.getStock();
+        ItemStock itemStockLocal = stockLocal.getOrDefault(idVehiculo, new ItemStock(0));
+        int disponibleLocal = itemStockLocal.getCantidad();
+
+        Almacen almacenCentral = almacenRepository.findByTipo(TipoAlmacen.CENTRAL)
+                .orElseThrow(AlmacenCentralNotFoundException::new);
+        Map<Long, ItemStock> stockCentral = almacenCentral.getStock();
+        ItemStock itemStockCentral = stockCentral.getOrDefault(idVehiculo, new ItemStock(0));
+        int disponibleCentral = itemStockCentral.getCantidad();
+
+        int totalDisponible = disponibleLocal + disponibleCentral;
+
+        return new StockVerifyAvailabilityResponseDTO(
+                cantidad,
+                totalDisponible >= cantidad,
+                almacenLocal.getId(),
+                disponibleLocal,
+                almacenCentral.getId(),
+                disponibleCentral,
+                idVehiculo
+        );
+    }
+
     public StockRequestResponseDTO stockRequest(Long idSucursal, Long idVehiculo, Integer cantidad) {
         Almacen almacenLocal = almacenRepository.findBySucursalId(idSucursal)
                 .orElseThrow(() -> new AlmacenNotFoundException(idSucursal));
@@ -42,10 +68,10 @@ public class AlmacenServiceImpl implements AlmacenService {
             return new StockRequestResponseDTO(tiempoEntregaEstimadoEnDias);
         }
 
-        throw new NotEnoughStockException(0);
+        throw new NotEnoughStockException(cantidadEnStockCentral.getCantidad());
     }
 
-    public void transferStock(Long idAlmacenOrigen, Long idAlmacenDestino, Long idVehiculo, Integer cantidad) {
+    private void transferStock(Long idAlmacenOrigen, Long idAlmacenDestino, Long idVehiculo, Integer cantidad) {
         Almacen almacenOrigen = almacenRepository.findById(idAlmacenOrigen)
                 .orElseThrow(() -> new AlmacenNotFoundException(idAlmacenOrigen));
         Map<Long, ItemStock> stockOrigen = almacenOrigen.getStock();

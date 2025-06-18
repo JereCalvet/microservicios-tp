@@ -18,14 +18,41 @@ public class AlmacenController {
 
     private final AlmacenService almacenSvc;
 
-    @PostMapping
-    @RequestMapping("/test")
-    public ResponseEntity<Void> test(@RequestBody @Valid AlmacenTestDto dto) {
+    /**
+     * Confirma la solicitud de stock para un vehículo en una sucursal específica.
+     * Si no hay suficiente stock en la sucursal, se intentará obtener del almacén central.
+     * Si no hay stock suficiente en ninguna parte, se lanzará una excepción.
+     * Posteriormente, si corresponde, realiza la transferencia de stock y se actualiza el stock de la sucursal y el almacén central.
+     */
+    @PostMapping("/stock-request")
+    public ResponseEntity<StockRequestResponseDTO> stockRequest(
+            @RequestBody @Valid StockRequestDTO dto
+    ) {
 
-        almacenSvc.stockRequest(dto.idSucursal(), dto.idVehiculo(), dto.cantidad());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                almacenSvc.stockRequest(
+                        dto.idSucursal(),
+                        dto.idVehiculo(),
+                        dto.cantidadRequerida()
+                )
+        );
     }
 
+    /**
+     * Verifica la disponibilidad de stock en una sucursal específica y en el almacén central.
+     */
+    @GetMapping("/verify-availability/{idSucursal}/vehiculo/{idVehiculo}")
+    public ResponseEntity<StockVerifyAvailabilityResponseDTO> verifyAvailability(
+            @PathVariable("idSucursal") Long idSucursal,
+            @PathVariable("idVehiculo") Long idVehiculo,
+            @RequestParam(value = "cantidad", defaultValue = "1") Integer cantidad) {
+
+        return ResponseEntity.ok(almacenSvc.verifyAvailability(idSucursal, idVehiculo, cantidad));
+    }
+
+    /**
+     * Helper - Verifica la disponibilidad de stock en una sucursal específica.
+     */
     @GetMapping("/sucursal/check-stock/{idSucursal}/vehiculo/{idVehiculo}")
     public ResponseEntity<StockStatusResponseDTO> checkStockSucursal(
             @PathVariable("idSucursal") Long idSucursal,
@@ -34,6 +61,9 @@ public class AlmacenController {
         return ResponseEntity.ok(almacenSvc.checkStockSucursal(idSucursal, idVehiculo));
     }
 
+    /**
+     * Helper - Verifica la disponibilidad de stock en un almacén específico.
+     */
     @GetMapping("/check-stock/{idAlmacen}/vehiculo/{idVehiculo}")
     public ResponseEntity<StockStatusResponseDTO> checkStockAlmacen(
             @PathVariable("idAlmacen") Long idAlmacen,

@@ -1,6 +1,10 @@
 package ar.edu.palermo.microservicios.ventasservice.service;
 
+import ar.edu.palermo.microservicios.ventasservice.config.SucursalConfig;
+import ar.edu.palermo.microservicios.ventasservice.exception.NotEnoughStockForSaleException;
+import ar.edu.palermo.microservicios.ventasservice.exception.SucursalConfigurationNotFoundException;
 import ar.edu.palermo.microservicios.ventasservice.integration.StockClient;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,22 +13,23 @@ import org.springframework.stereotype.Service;
 public class VentasServiceImpl {
 
     private final StockClient stockClient;
+    private final SucursalConfig sucursalConfig;
 
-    public void realizarVenta(Long clienteId, Long sucursalId, Long vehiculoId, Long vendedorId, Integer cantidad) {
-        var stockResponse = stockClient.checkStock(sucursalId, vehiculoId);
+    @Transactional
+    public void realizarVenta(Long clienteId, Long vehiculoId, Long vendedorId, Integer cantidad) {
 
-        if (stockResponse.cantidadVehiculos() < cantidad) {
-            throw new IllegalArgumentException("No hay suficiente stock disponible para realizar la venta.");
+        String sucursalId = sucursalConfig.getSucursalId();
+        if (sucursalId.isBlank()) {
+            throw new SucursalConfigurationNotFoundException();
         }
 
-        // Aquí se podría continuar con el proceso de venta, como guardar la venta en la base de datos
-        // y actualizar el stock en el servicio de stock.
+        var availabilityStockResponse = stockClient.verifyAvailability(Long.valueOf(sucursalId), vehiculoId, cantidad);
+        if (!availabilityStockResponse.isAvailable()) {
+            throw new NotEnoughStockForSaleException();
+        }
 
-        // Ejemplo de lógica adicional:
-        // Venta venta = new Venta(clienteId, sucursalId, vehiculoId, vendedorId, cantidad);
-        // ventaRepository.save(venta);
-
-        // Actualizar el stock
-        // stockClient.updateStock(sucursalId, vehiculoId, -cantidad);
+        stockClient.stockRequest(Long.valueOf(sucursalId), vehiculoId, cantidad);
+        cusmimos/retiramos el stock del la sucursal (local)
+        fin de venta.
     }
 }
