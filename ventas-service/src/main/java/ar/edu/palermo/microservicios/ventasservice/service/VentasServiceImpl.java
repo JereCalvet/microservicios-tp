@@ -16,14 +16,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class VentasServiceImpl {
+public class VentasServiceImpl implements VentasService {
 
     private final StockClient stockClient;
     private final SucursalConfig sucursalConfig;
     private final VentasRepositoy ventasRepository;
     private final VentaMapper ventaMapper;
 
-//    @Override
+    @Override
     public List<VentaResponseDTO> findAll() {
         List<Venta> sucursales = ventasRepository.findAll();
         return sucursales.stream()
@@ -31,7 +31,7 @@ public class VentasServiceImpl {
                 .toList();
     }
 
-//    @Override
+    @Override
     public VentaResponseDTO findById(Long id) {
         Venta ventaFound = ventasRepository.findById(id)
                 .orElseThrow(() -> new VentaNotFoundException(id));

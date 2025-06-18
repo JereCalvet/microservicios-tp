@@ -16,6 +16,7 @@
 		<module>sucursales-service</module>
 		<module>stock-service</module>
 		<module>discovery-service</module>
+		<module>mecanica-service</module>
 	</modules>
 
 	<parent>

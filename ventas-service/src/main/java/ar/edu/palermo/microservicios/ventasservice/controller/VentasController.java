@@ -2,7 +2,7 @@ package ar.edu.palermo.microservicios.ventasservice.controller;
 
 import ar.edu.palermo.microservicios.ventasservice.model.DatosFacturaDTO;
 import ar.edu.palermo.microservicios.ventasservice.model.VentaResponseDTO;
-import ar.edu.palermo.microservicios.ventasservice.service.VentasServiceImpl;
+import ar.edu.palermo.microservicios.ventasservice.service.VentasService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/v1/ventas")
 public class VentasController {
 
-    private final VentasServiceImpl ventasService;
+    private final VentasService ventasService;
 
     @PostMapping("/facturar")
     public ResponseEntity<Void> registrarVenta(@RequestBody @Valid DatosFacturaDTO facturaDto) {

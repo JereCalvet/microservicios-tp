@@ -39,6 +39,7 @@ public class Venta {
     @NotNull
     private Long vendedorId;
 
+    @Builder.Default
     @NotNull
     private Integer cantidad = 1;
 
