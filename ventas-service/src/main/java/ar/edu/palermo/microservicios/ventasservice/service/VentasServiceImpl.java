@@ -3,17 +3,16 @@ package ar.edu.palermo.microservicios.ventasservice.service;
 import ar.edu.palermo.microservicios.ventasservice.config.SucursalConfig;
 import ar.edu.palermo.microservicios.ventasservice.exception.NotEnoughStockForSaleException;
 import ar.edu.palermo.microservicios.ventasservice.exception.SucursalConfigurationNotFoundException;
+import ar.edu.palermo.microservicios.ventasservice.exception.VentaNotFoundException;
 import ar.edu.palermo.microservicios.ventasservice.integration.StockClient;
-import ar.edu.palermo.microservicios.ventasservice.model.DatosFacturaDTO;
-import ar.edu.palermo.microservicios.ventasservice.model.StockRequestDTO;
-import ar.edu.palermo.microservicios.ventasservice.model.StockRequestResponseDTO;
-import ar.edu.palermo.microservicios.ventasservice.model.Venta;
+import ar.edu.palermo.microservicios.ventasservice.model.*;
 import ar.edu.palermo.microservicios.ventasservice.repository.VentasRepositoy;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +21,22 @@ public class VentasServiceImpl {
     private final StockClient stockClient;
     private final SucursalConfig sucursalConfig;
     private final VentasRepositoy ventasRepository;
+    private final VentaMapper ventaMapper;
+
+//    @Override
+    public List<VentaResponseDTO> findAll() {
+        List<Venta> sucursales = ventasRepository.findAll();
+        return sucursales.stream()
+                .map(ventaMapper::toResponseDTO)
+                .toList();
+    }
+
+//    @Override
+    public VentaResponseDTO findById(Long id) {
+        Venta ventaFound = ventasRepository.findById(id)
+                .orElseThrow(() -> new VentaNotFoundException(id));
+        return ventaMapper.toResponseDTO(ventaFound);
+    }
 
     @Transactional
     public void realizarVenta(DatosFacturaDTO datosFacturaDTO) {

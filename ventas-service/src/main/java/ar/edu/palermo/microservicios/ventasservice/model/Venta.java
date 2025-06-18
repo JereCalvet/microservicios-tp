@@ -42,12 +42,15 @@ public class Venta {
     @NotNull
     private Integer cantidad = 1;
 
+    @Builder.Default
     @NotNull
     private LocalDate fechaVenta = LocalDate.now();
 
+    @Builder.Default
     @NotNull
     private Double precioUnitario = 0.0;
 
+    @Builder.Default
     @NotNull
     private Double totalVenta = 0.0;
 
