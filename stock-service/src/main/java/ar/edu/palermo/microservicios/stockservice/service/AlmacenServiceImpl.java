@@ -53,8 +53,9 @@ public class AlmacenServiceImpl implements AlmacenService {
         ItemStock cantidadEnStockLocal = stockLocal.getOrDefault(idVehiculo, new ItemStock(0));
 
         if (cantidadEnStockLocal.getCantidad() >= cantidad) {
-            this.removeStock(almacenLocal.getId(), idVehiculo, cantidad);
-            return new StockRequestResponseDTO(0);
+            return new StockRequestResponseDTO(
+                    almacenLocal.getId(),
+                    0);
         }
 
         Almacen almacenCentral = almacenRepository.findByTipo(TipoAlmacen.CENTRAL)
@@ -65,7 +66,10 @@ public class AlmacenServiceImpl implements AlmacenService {
         if (cantidadEnStockCentral.getCantidad() >= cantidad) {
             this.transferStock(almacenCentral.getId(), almacenLocal.getId(), idVehiculo, cantidad);
             Integer tiempoEntregaEstimadoEnDias = this.calculateTransferTimeFromConfig(almacenCentral.getId(), almacenLocal.getId());
-            return new StockRequestResponseDTO(tiempoEntregaEstimadoEnDias);
+            return new StockRequestResponseDTO(
+                    almacenLocal.getId(),
+                    tiempoEntregaEstimadoEnDias
+            );
         }
 
         throw new NotEnoughStockException(cantidadEnStockCentral.getCantidad());

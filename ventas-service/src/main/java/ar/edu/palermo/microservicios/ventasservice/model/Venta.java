@@ -1,19 +1,34 @@
 package ar.edu.palermo.microservicios.ventasservice.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.time.LocalDate;
 
+@Setter
+@Getter
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Venta {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
     private Long clienteId;
+
+    @NotBlank
+    private String nombreCliente;
+
+    @NotBlank
+    private String dniCliente;
 
     @NotNull
     private Long sucursalId;
@@ -35,4 +50,6 @@ public class Venta {
 
     @NotNull
     private Double totalVenta = 0.0;
+
+    private String observaciones;
 }
