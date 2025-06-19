@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -46,7 +47,7 @@ public class VentasServiceImpl implements VentasService {
     }
 
     @Transactional
-    public void realizarVenta(DatosFacturaDTO datosFacturaDTO) {
+    public VentaResponseDTO realizarVenta(DatosFacturaDTO datosFacturaDTO) {
         StockRequestResponseDTO dto = solicitarStock(datosFacturaDTO.vehiculoId(), datosFacturaDTO.cantidad());
         Integer diasEspera = dto.tiempoEntregaEstimadoEnDias();
         Long idAlmacenDeLaSucursal = dto.almacenDestinoId();
@@ -68,14 +69,14 @@ public class VentasServiceImpl implements VentasService {
                         "%s-%s-%s",
                         datosFacturaDTO.nombreCliente().substring(0, 3).toUpperCase(),
                         datosFacturaDTO.dniCliente().substring(0, 3),
-                        "ARG"
+                        String.format("%s%s", "ARG", UUID.randomUUID().toString().toUpperCase().substring(0, 6))
                 ))
                 .observaciones(String.format(
                         "Venta realizada con éxito. Tiempo de espera estimado: %d días.",
                         diasEspera
                 ))
                 .build();
-        ventasRepository.save(factura);
+        Venta savedEntity = ventasRepository.save(factura);
 
         try {
             stockClient.removeStock(
@@ -87,6 +88,8 @@ public class VentasServiceImpl implements VentasService {
             System.out.println("Error al eliminar stock: " + e.getMessage());
             throw new RuntimeException(e);
         }
+
+        return ventaMapper.toResponseDTO(savedEntity);
     }
 
     private StockRequestResponseDTO solicitarStock(Long vehiculoId, Integer cantidad) {

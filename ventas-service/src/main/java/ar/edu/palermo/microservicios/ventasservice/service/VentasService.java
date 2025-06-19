@@ -9,5 +9,5 @@ public interface VentasService {
     List<VentaResponseDTO> findAll();
     VentaResponseDTO findById(Long id);
     VentaResponseDTO findByPatenteVehiculo(String patenteVehiculo);
-    void realizarVenta(DatosFacturaDTO datosFacturaDTO);
+    VentaResponseDTO realizarVenta(DatosFacturaDTO datosFacturaDTO);
 }

@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -18,9 +20,15 @@ public class VentasController {
     private final VentasService ventasService;
 
     @PostMapping("/facturar")
-    public ResponseEntity<Void> registrarVenta(@RequestBody @Valid DatosFacturaDTO facturaDto) {
-        ventasService.realizarVenta(facturaDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<VentaResponseDTO> registrarVenta(@RequestBody @Valid DatosFacturaDTO facturaDto) {
+        VentaResponseDTO savedEntity = ventasService.realizarVenta(facturaDto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/v1/ventas/{id}")
+                .buildAndExpand(savedEntity.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(savedEntity);
     }
 
     @GetMapping()
